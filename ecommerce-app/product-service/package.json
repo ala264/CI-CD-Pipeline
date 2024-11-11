@@ -1,0 +1,17 @@
+{
+  "name": "product-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "jest": "^29.7.0",
+    "sqlite3": "^5.1.7",
+    "supertest": "^7.0.0"
+  }
+}
