@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd eccomerce-app/user-service
+          cd ecommerce-app/user-service
           npm install
 
       - name: Run tests
