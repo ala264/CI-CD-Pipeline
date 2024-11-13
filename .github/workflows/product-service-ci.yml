@@ -25,7 +25,7 @@ jobs:
 
       - name: Run tests
         run: |
-          cd product-service
+          cd ecommerce-app/product-service
           npm test
 
       - name: Build Docker image
