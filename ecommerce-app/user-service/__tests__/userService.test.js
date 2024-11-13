@@ -1,9 +1,17 @@
+
 const request = require('supertest');
 const app = require('../server');
 const sqlite3 = require('sqlite3');
 
+let db;
+let server;
+
+beforeAll(() => {
+  db = new sqlite3.Database('./user-database.sqlite');
+  server = app.listen(3002);
+});
+
 beforeEach(async () => {
-  const db = new sqlite3.Database('./user-database.sqlite');
   await new Promise((resolve, reject) => {
     db.run('DELETE FROM users', (err) => {
       if (err) reject(err);
@@ -19,6 +27,7 @@ afterAll(async () => {
       resolve();
     });
   });
+  server.close();
 });
 
 test('Should register a new user successfully', async () => {
@@ -44,14 +53,12 @@ test('Should fail login with invalid credentials', async () => {
 });
 
 test('Should delete a user successfully', async () => {
-  // Register a new user first
   const registerResponse = await request(app)
     .post('/register')
     .send({ username: 'deleteuser', password: 'deletepass' });
 
   const userId = registerResponse.body.id;
 
-  // Delete the user
   const deleteResponse = await request(app)
     .delete('/deleteUser')
     .send({ id: userId });
@@ -59,7 +66,6 @@ test('Should delete a user successfully', async () => {
   expect(deleteResponse.statusCode).toBe(201);
   expect(deleteResponse.body.message).toBe('User deleted successfully');
 
-  // Verify the user is deleted
   const getResponse = await request(app).get('/getUsers');
   const users = getResponse.body;
   const userExists = users.some((user) => user.id === userId);
@@ -68,30 +74,22 @@ test('Should delete a user successfully', async () => {
 });
 
 test('Should get all users successfully', async () => {
-  // Register two users
   await request(app).post('/register').send({ username: 'user1', password: 'pass1' });
   await request(app).post('/register').send({ username: 'user2', password: 'pass2' });
 
-  // Get all users
   const response = await request(app).get('/getUsers');
 
   expect(response.statusCode).toBe(200);
   expect(response.body).toBeInstanceOf(Array);
   expect(response.body.length).toBeGreaterThanOrEqual(2);
 
-  // Check if the registered users exist
   const usernames = response.body.map((user) => user.username);
   expect(usernames).toContain('user1');
   expect(usernames).toContain('user2');
 });
 
-
 test('Should return 404 for invalid user deletion', async () => {
-  // Attempt to delete a non-existent product
-  const response = await request(app)
-    .delete('/deleteUser')
-    .send({ id: 9999 });
-
+  const response = await request(app).delete('/deleteUser').send({ id: 9999 });
   expect(response.statusCode).toBe(404);
   expect(response.body).toHaveProperty('error');
 });

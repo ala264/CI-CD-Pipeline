@@ -1,44 +1,82 @@
-name: Product Service CI
 
-on:
-  push:
-    branches:
-      - main
+const request = require('supertest');
+const app = require('../server');
+const sqlite3 = require('sqlite3');
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+let db;
+let server;
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+beforeAll(() => {
+  db = new sqlite3.Database('./product-database.sqlite');
+  server = app.listen(3003);
+});
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+beforeEach(async () => {
+  await new Promise((resolve, reject) => {
+    db.run('DELETE FROM products', (err) => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
+});
 
-      - name: Install dependencies
-        run: |
-          cd ecommerce-app/product-service
-          npm install
+afterAll(async () => {
+  await new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
+  server.close();
+});
 
-      - name: Run tests
-        run: |
-          cd ecommerce-app/product-service
-          npm test
+test('Should add a new product successfully', async () => {
+  const response = await request(app)
+    .post('/products')
+    .send({ name: 'Product A', price: 99.99 });
 
-      - name: Build Docker image
-        run: |
-          cd product-service
-          docker build -t ala264/product-service:latest .
+  expect(response.statusCode).toBe(201);
+  expect(response.body).toHaveProperty('id');
+});
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+test('Should list all products successfully', async () => {
+  await request(app).post('/products').send({ name: 'Product A', price: 99.99 });
+  await request(app).post('/products').send({ name: 'Product B', price: 49.99 });
 
-      - name: Push Docker image
-        run: |
-          docker push ala264/product-service:latest
+  const response = await request(app).get('/products');
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body).toBeInstanceOf(Array);
+  expect(response.body.length).toBeGreaterThanOrEqual(2);
+
+  const productNames = response.body.map((product) => product.name);
+  expect(productNames).toContain('Product A');
+  expect(productNames).toContain('Product B');
+});
+
+test('Should delete a product successfully', async () => {
+  const addResponse = await request(app)
+    .post('/products')
+    .send({ name: 'Product C', price: 29.99 });
+
+  const productId = addResponse.body.id;
+
+  const deleteResponse = await request(app)
+    .delete('/products')
+    .send({ id: productId });
+
+  expect(deleteResponse.statusCode).toBe(201);
+  expect(deleteResponse.body.message).toBe('Product deleted successfully');
+
+  const getResponse = await request(app).get('/products');
+  const products = getResponse.body;
+  const productExists = products.some((product) => product.id === productId);
+
+  expect(productExists).toBe(false);
+});
+
+test('Should return 404 for invalid product deletion', async () => {
+  const response = await request(app).delete('/products').send({ id: 9999 });
+  expect(response.statusCode).toBe(404);
+  expect(response.body).toHaveProperty('error');
+});
