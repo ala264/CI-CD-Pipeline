@@ -12,9 +12,13 @@ beforeEach(async () => {
   });
 });
 
-afterAll(() => {
-  const db = new sqlite3.Database('./user-database.sqlite');
-  db.close();
+afterAll(async () => {
+  await new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
 });
 
 test('Should register a new user successfully', async () => {

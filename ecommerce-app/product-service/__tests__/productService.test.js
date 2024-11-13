@@ -17,8 +17,14 @@ beforeEach(async () => {
   });
 });
 
-afterAll(() => {
-  db.close();
+
+afterAll(async () => {
+  await new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
 });
 
 test('Should add a new product successfully', async () => {
