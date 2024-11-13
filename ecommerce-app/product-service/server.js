@@ -49,8 +49,9 @@ app.delete('/products', (req, res) => {
   });
 });
 // Start Server
-app.listen(3002, () => {
-  console.log('Product Service listening on http://localhost:3002');
-});
-
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(3002, () => {
+    console.log('Product Service listening on http://localhost:3002');
+  });
+}
 module.exports = app;

@@ -50,12 +50,6 @@ app.delete('/deleteUser', (req, res) => {
     res.status(201).json({ message: 'User deleted successfully' });
   });
 });
-// Start Server
-app.listen(3002, () => {
-  console.log('Product Service listening on http://localhost:3002');
-});
-
-module.exports = app;
 
 
 app.get('/getUsers', (req, res) => {
@@ -65,9 +59,9 @@ app.get('/getUsers', (req, res) => {
   });
 });
 
-// Start Server
-app.listen(3001, () => {
-  console.log('User Service listening on http://localhost:3001');
-});
-
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(3001, () => {
+    console.log('User Service listening on http://localhost:3001');
+  });
+}
 module.exports = app;
