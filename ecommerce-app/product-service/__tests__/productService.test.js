@@ -63,3 +63,7 @@ test('Should return 404 for invalid product deletion', async () => {
   expect(response.statusCode).toBe(404);
   expect(response.body).toHaveProperty('error');
 });
+
+afterAll(() => {
+  server.close();
+});
