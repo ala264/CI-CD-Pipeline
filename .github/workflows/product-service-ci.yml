@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd product-service
+          cd eccomerce-app/product-service
           docker build -t ala264/product-service:latest .
 
       - name: Log in to Docker Hub
