@@ -73,6 +73,3 @@ test('Should return 404 for invalid user deletion', async () => {
   expect(response.body).toHaveProperty('error');
 });
 
-afterAll(() => {
-  server.close();
-});

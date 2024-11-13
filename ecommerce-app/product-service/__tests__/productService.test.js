@@ -13,8 +13,13 @@ beforeEach(async () => {
     });
   });
 });
-afterAll(() => {
-  db.close();
+afterAll(async () => {
+  await new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
 });
 test('Should add a new product successfully', async () => {
   const response = await request(app)
@@ -64,6 +69,3 @@ test('Should return 404 for invalid product deletion', async () => {
   expect(response.body).toHaveProperty('error');
 });
 
-afterAll(() => {
-  server.close();
-});
