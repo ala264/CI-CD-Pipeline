@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd user-service
+          cd ecommerce-app/user-service
           docker build -t ala264/user-service:latest .
 
       - name: Log in to Docker Hub
