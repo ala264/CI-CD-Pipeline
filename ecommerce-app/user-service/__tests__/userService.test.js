@@ -1,8 +1,13 @@
 const request = require('supertest');
 const app = require('../server');
 const sqlite3 = require('sqlite3');
+
+let db;
+beforeAll(() => {
+  db = new sqlite3.Database('./user-database.sqlite');
+});
+
 beforeEach(async () => {
-  const db = new sqlite3.Database('./user-database.sqlite');
   await new Promise((resolve, reject) => {
     db.run('DELETE FROM users', (err) => {
       if (err) reject(err);
