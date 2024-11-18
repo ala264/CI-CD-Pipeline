@@ -28,6 +28,14 @@ jobs:
           cd ecommerce-app/product-service
           npm test
 
+      - name: Rollback (if tests fail)
+        if: failure() && steps.npm-test.outcome == 'failure'  # Condition to check if the test step fails
+        run: |
+          echo "Tests failed. Reverting to the previous commit..."
+          git revert --no-edit HEAD
+        # Push the new revert commit to the remote main branch
+          git push origin main  
+
       - name: Build Docker image
         run: |
           cd ecommerce-app/product-service
