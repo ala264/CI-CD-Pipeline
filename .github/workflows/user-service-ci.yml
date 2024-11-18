@@ -24,6 +24,7 @@ jobs:
           npm install
 
       - name: Run tests
+        id: npm-test
         run: |
           cd ecommerce-app/user-service
           npm test
@@ -35,7 +36,7 @@ jobs:
           git revert --no-edit HEAD
         # Push the new revert commit to the remote main branch
           git push origin main  
-          
+
       - name: Build Docker image
         run: |
           cd ecommerce-app/user-service

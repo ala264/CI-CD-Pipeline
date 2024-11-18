@@ -24,6 +24,7 @@ jobs:
           npm install
 
       - name: Run tests
+        id: npm-test
         run: |
           cd ecommerce-app/product-service
           npm test
