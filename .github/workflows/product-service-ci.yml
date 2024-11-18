@@ -37,7 +37,7 @@ jobs:
           git config --global user.name "hathaull"
           git stash save "Stashing changes before revert"
           git revert --no-edit HEAD
-          git checkout HEAD^ -- .
+          git checkout HEAD^^ -- .
           git add .
           git commit -m "Restore files after reverting commit"
           git push origin main  
