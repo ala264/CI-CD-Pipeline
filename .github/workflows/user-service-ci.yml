@@ -33,6 +33,8 @@ jobs:
         if: failure() && steps.npm-test.outcome == 'failure' 
         run: |
           echo "Tests failed. Reverting to the previous commit..."
+          git config --global user.email "hathaull@sfu.ca"
+          git config --global user.name "hathaull"
           git stash save "Stashing changes before revert"
           git revert --no-edit HEAD
           git commit -m "Revert to previous commit due to failed tests"
