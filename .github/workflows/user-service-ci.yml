@@ -30,25 +30,27 @@ jobs:
           npm test
       
       - name: Rollback (if tests fail)
-        if: failure() && steps.npm-test.outcome == 'failure'  # Condition to check if the test step fails
+        if: failure() && steps.npm-test.outcome == 'failure' 
         run: |
           echo "Tests failed. Reverting to the previous commit..."
           git revert --no-edit HEAD
-        # Push the new revert commit to the remote main branch
           git commit -m "Revert to previous commit due to failed tests"
           git push origin main  
 
       - name: Build Docker image
+        if: success()
         run: |
           cd ecommerce-app/user-service
           docker build -t ala264/user-service:latest .
 
       - name: Log in to Docker Hub
+        if: success()
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image
+        if: success()
         run: |
           docker push ala264/user-service:latest
