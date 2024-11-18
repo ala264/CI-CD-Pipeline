@@ -35,7 +35,7 @@ jobs:
           echo "Tests failed. Reverting to the previous commit..."
           git config --global user.email "hathaull@sfu.ca"
           git config --global user.name "hathaull"
-          git stash save "Stashing changes before revert"
+          git stash save "Stashing changes before reset"
           git fetch --unshallow
           git reset --hard HEAD~1
           git push origin main --force 
