@@ -37,7 +37,7 @@ jobs:
           git config --global user.name "hathaull"
           git stash save "Stashing changes before revert"
           git fetch --unshallow
-          git reset --hard HEAD~2
+          git reset --hard HEAD~1
           git push origin main --force 
 
       - name: Build Docker image
