@@ -39,7 +39,7 @@ test('Should list all products successfully', async () => {
   expect(response.body.length).toBeGreaterThanOrEqual(2);
   // Check if the added products are in the response
   const productNames = response.body.map((product) => product.name);
-  expect(productNames).toContain('Product C');
+  expect(productNames).toContain('Product D');
   expect(productNames).toContain('Product B');
 });
 test('Should delete a product successfully', async () => {
