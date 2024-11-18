@@ -30,7 +30,7 @@ test('Should add a new product successfully', async () => {
 });
 test('Should list all products successfully', async () => {
   // Add two products first
-  await request(app).post('/products').send({ name: 'Product C', price: 99.99 });
+  await request(app).post('/products').send({ name: 'Product A', price: 99.99 });
   await request(app).post('/products').send({ name: 'Product B', price: 49.99 });
   // Get the list of products
   const response = await request(app).get('/products');
