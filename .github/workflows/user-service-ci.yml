@@ -37,7 +37,6 @@ jobs:
           git config --global user.name "hathaull"
           git stash save "Stashing changes before revert"
           git revert --no-edit HEAD
-          git commit -m "Revert to previous commit due to failed tests"
           git push origin main  
 
       - name: Build Docker image
