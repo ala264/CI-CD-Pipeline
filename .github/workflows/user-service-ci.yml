@@ -35,6 +35,7 @@ jobs:
           echo "Tests failed. Reverting to the previous commit..."
           git revert --no-edit HEAD
         # Push the new revert commit to the remote main branch
+          git commit -m "Revert to previous commit due to failed tests"
           git push origin main  
 
       - name: Build Docker image
