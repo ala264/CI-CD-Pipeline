@@ -36,16 +36,8 @@ jobs:
           git config --global user.email "hathaull@sfu.ca"
           git config --global user.name "hathaull"
           git stash save "Stashing changes before revert"
-          git log --oneline
-
-          commit_count=$(git rev-list --count HEAD)
-          if [ "$commit_count" -gt 2 ]; then
-            git reset --hard HEAD~2
-          else
-            echo "Not enough commits to reset to HEAD~2, resetting to the first commit."
-            git reset --hard HEAD~1
-          fi 
-          
+          git fetch --unshallow
+          git reset --hard HEAD~2
           git push origin main --force 
 
       - name: Build Docker image
