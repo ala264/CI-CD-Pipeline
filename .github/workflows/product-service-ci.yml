@@ -82,5 +82,6 @@ jobs:
       - name: Update Kubernetes Deployment
         if: success()
         run: |
-          kubectl set image deployment/product-service-deployment product-service=ala264/product-service:${{ github.sha }}
+          kubectl set image deployment/product-service-deployment product-service=ala264/product-service:${{ github.sha }} --namespace=product-service
+          kubectl rollout status deployment/product-service-deployment --namespace=product-service
 
