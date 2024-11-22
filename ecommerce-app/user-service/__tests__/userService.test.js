@@ -74,7 +74,7 @@ test('Should return 404 for invalid user deletion', async () => {
   const response = await request(app)
     .delete('/deleteUser')
     .send({ id: 9999 });
-  expect(response.statusCode).toBe(4013);
+  expect(response.statusCode).toBe(404);
   expect(response.body).toHaveProperty('error');
 });
 
