@@ -60,6 +60,13 @@ jobs:
           docker push ala264/product-service:${{ github.sha }}
           docker push ala264/product-service:latest
 
+
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
+
       - name: Authenticate to Google Cloud
         if: success()
         uses: google-github-actions/auth@v1
