@@ -77,7 +77,7 @@ jobs:
       - name: Connect to GKE Cluster
         if: success()
         run: |
-          gcloud container clusters get-credentials your-cluster-name --region your-region
+          gcloud container clusters get-credentials cicd-pipeline --region us-central1
 
       - name: Update Kubernetes Deployment
         if: success()
