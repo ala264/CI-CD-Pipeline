@@ -1,0 +1,21 @@
+# product-service-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service-deployment
+  namespace: product-service   # Define the namespace here
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+      - name: product-service
+        image: ala264/product-service:${{ github.sha }}
+        ports:
+        - containerPort: 8080
