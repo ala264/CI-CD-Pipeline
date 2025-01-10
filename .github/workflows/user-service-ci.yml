@@ -78,7 +78,7 @@ jobs:
       - name: Connect to GKE Cluster
         if: success()
         run: |
-          gcloud container clusters get-credentials cicd-pipeline --region us-central1 --project ecommerce-cluster
+          gcloud container clusters get-credentials cicd-pipeline-442500 --region us-central1 --project ecommerce-cluster
 
       - name: Update Kubernetes Deployment
         if: success()
