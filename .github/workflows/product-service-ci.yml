@@ -80,7 +80,7 @@ jobs:
         if: success()
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ecommerce-cluster
+          project_id: cicd-pipeline-442500
           credentials_json: ${{ secrets.GCP_SA_KEY }} 
           export_default_credentials: true
 
