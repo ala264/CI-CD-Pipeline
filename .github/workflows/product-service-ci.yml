@@ -85,7 +85,6 @@ jobs:
           export_default_credentials: true
 
       # Step 11: Connect to GKE Cluster
-      # Added admin privilege
       - name: Connect to GKE Cluster
         if: success()
         run: |
