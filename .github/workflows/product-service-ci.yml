@@ -10,25 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout Code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
+      # Step 3: Install Dependencies
       - name: Install dependencies
         run: |
           cd ecommerce-app/product-service
           npm install
 
+      # Step 4: Run Tests
       - name: Run tests
         id: npm-test
         run: |
           cd ecommerce-app/product-service
           npm test
 
+      # Step 5: Rollback (if tests fail)
       - name: Rollback (if tests fail)
         if: failure() && steps.npm-test.outcome == 'failure' 
         run: |
@@ -40,6 +45,7 @@ jobs:
           git reset --hard HEAD~1
           git push origin main --force 
 
+      # Step 6: Build Docker Image
       - name: Build Docker image
         if: success()
         run: |
@@ -47,6 +53,7 @@ jobs:
           docker build -t ala264/product-service:${{ github.sha }} .
           docker tag ala264/product-service:${{ github.sha }} ala264/product-service:latest
 
+      # Step 7: Log in to Docker Hub
       - name: Log in to Docker Hub
         if: success()
         uses: docker/login-action@v2
@@ -54,36 +61,38 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # Step 8: Push Docker Image
       - name: Push Docker image
         if: success()
         run: |
           docker push ala264/product-service:${{ github.sha }}
           docker push ala264/product-service:latest
 
-
-
+      # Step 9: Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         if: success()
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      # Step 10: Set up gcloud and kubectl
       - name: Set up kubectl
         if: success()
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: your-gcp-project-id
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }} # Ensure you store your GCP Project ID in Secrets
+          credentials_json: ${{ secrets.GCP_SA_KEY }} 
           export_default_credentials: true
 
+      # Step 11: Connect to GKE Cluster
       - name: Connect to GKE Cluster
         if: success()
         run: |
-          gcloud container clusters get-credentials cicd-pipeline --region us-central1
+          gcloud container clusters get-credentials cicd-pipeline --region us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
 
+      # Step 12: Update Kubernetes Deployment
       - name: Update Kubernetes Deployment
         if: success()
         run: |
           kubectl set image deployment/product-service-deployment product-service=ala264/product-service:${{ github.sha }} --namespace=product-service
           kubectl rollout status deployment/product-service-deployment --namespace=product-service
-
