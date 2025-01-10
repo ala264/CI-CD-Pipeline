@@ -71,14 +71,14 @@ jobs:
         if: success()
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: my-ecommerce-project
+          project_id: ecommerce-cluster
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
       - name: Connect to GKE Cluster
         if: success()
         run: |
-          gcloud container clusters get-credentials cicd-pipeline --region us-central1 --project my-ecommerce-project
+          gcloud container clusters get-credentials cicd-pipeline --region us-central1 --project ecommerce-cluster
 
       - name: Update Kubernetes Deployment
         if: success()
