@@ -80,7 +80,7 @@ jobs:
         if: success()
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }} # Ensure you store your GCP Project ID in Secrets
+          project_id: my-ecommerce-project 
           credentials_json: ${{ secrets.GCP_SA_KEY }} 
           export_default_credentials: true
 
@@ -88,7 +88,7 @@ jobs:
       - name: Connect to GKE Cluster
         if: success()
         run: |
-          gcloud container clusters get-credentials cicd-pipeline --region us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials cicd-pipeline --region us-central1 --project my-ecommerce-project
 
       # Step 12: Update Kubernetes Deployment
       - name: Update Kubernetes Deployment
