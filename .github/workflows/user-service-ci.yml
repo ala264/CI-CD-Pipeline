@@ -66,11 +66,11 @@ jobs:
           sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
   
           
-      - name: Authenticate to Google Cloud
-        if: success()
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+
 
       - name: Set up kubectl
         if: success()
