@@ -106,7 +106,22 @@ jobs:
 
       - name: Update Kubernetes Deployment
         if: success()
+
+
+
+      - name: Get External IP of User Service
         run: |
-          set -e
+          echo "Waiting for the LoadBalancer IP to be assigned..."
+          EXTERNAL_IP=""
+          while [[ -z "$EXTERNAL_IP" ]]; do
+            EXTERNAL_IP=$(kubectl get svc user-service --namespace=user-service -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            if [[ -z "$EXTERNAL_IP" ]]; then
+              echo "External IP not assigned yet. Retrying..."
+              sleep 10  # Wait for 10 seconds before checking again
+            fi
+          done
+          echo "External IP of user-service: $EXTERNAL_IP"
+              run: |
+                set -e
           kubectl set image deployment/user-service-deployment user-service=ala264/user-service:${{ github.sha }} --namespace=user-service
           kubectl rollout status deployment/user-service-deployment --namespace=user-service
