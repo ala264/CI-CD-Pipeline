@@ -76,31 +76,31 @@ jobs:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       # Step 10: Set up gcloud and kubectl
-      - name: Set up kubectl
+      - name: Set up gcloud and kubectl
         if: success()
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: cicd-pipeline-442500
-          credentials_json: ${{ secrets.GCP_SA_KEY }} 
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
+      # Step 11: Install and configure gke-gcloud-auth-plugin
       - name: Install gke-gcloud-auth-plugin
         if: success()
         run: |
-          sudo apt-get update
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          sudo apt-get install -y apt-transport-https ca-certificates gnupg
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin
-          export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+        env:
+          CLOUDSDK_CORE_PROJECT: cicd-pipeline-442500
 
-    
-      # Step 11: Connect to GKE Cluster
+      # Step 12: Connect to GKE Cluster
       - name: Connect to GKE Cluster
         if: success()
         run: |
-          gcloud container clusters get-credentials ecommerce-cluster --region us-central1 --project cicd-pipeline-442500
+          gcloud container clusters get-credentials ecommerce-cluster \
+            --region us-central1 \
+            --project cicd-pipeline-442500
+        env:
+          USE_GKE_GCLOUD_AUTH_PLUGIN: "True"
 
       # Step 12: Update Kubernetes Deployment
       - name: Update Kubernetes Deployment
