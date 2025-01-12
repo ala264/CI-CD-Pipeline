@@ -104,41 +104,6 @@ jobs:
         run: |
           kubectl apply -f ecommerce-app/k8s/user-service/deployment.yaml --namespace=user-service
 
-      - name: Get External IP of User Service
-        run: |
-          echo "Waiting for the LoadBalancer IP to be assigned..."
-          
-          # Initial delay for load balancer IP assignment
-          sleep 30  # Wait for 30 seconds to give time for the LoadBalancer to be provisioned
-          
-          # Fetch the external IP of the user-service
-          EXTERNAL_IP=$(kubectl get svc user-service --namespace=user-service -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          
-          # Retry logic in case the IP is not assigned yet
-          if [ -z "$EXTERNAL_IP" ]; then
-            echo "External IP not assigned yet, retrying every 10 seconds..."
-            for i in {1..10}; do
-              echo "Checking... attempt $i"
-              EXTERNAL_IP=$(kubectl get svc user-service --namespace=user-service -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-              if [ -n "$EXTERNAL_IP" ]; then
-                echo "External IP found: $EXTERNAL_IP"
-                break
-              fi
-              sleep 10  # Wait for 10 seconds before checking again
-            done
-          fi
-          
-          # If we have an external IP, print it; otherwise, notify failure
-          if [ -n "$EXTERNAL_IP" ]; then
-            echo "External IP of user-service: $EXTERNAL_IP"
-          else
-            echo "Failed to retrieve external IP after 10 attempts."
-            exit 1  # Exit with an error if IP is not found
-          fi
-
-
-
-
       - name: Update Kubernetes Deployment
         if: success()
 
