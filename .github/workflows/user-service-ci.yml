@@ -72,11 +72,11 @@ jobs:
           version: 'latest'
 
 
-      - name: Add Google Cloud SDK repositories and GPG key
+      - name: Add Google Cloud SDK repository and GPG key
         run: |
           echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
           curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
-
+  
 
       - name: Debug GPG key installation
         run: |
