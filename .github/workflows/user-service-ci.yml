@@ -88,6 +88,22 @@ jobs:
         run: |
           kubectl create namespace user-service || echo "Namespace already exists"
 
+      - name: Debug: List Deployments
+        run: |
+          kubectl get deployments --namespace=user-service
+
+      - name: Debug: Describe Deployment
+        run: |
+          kubectl describe deployment user-service-deployment --namespace=user-service || echo "Deployment not found"
+
+      - name: Debug: List Pods
+        run: |
+          kubectl get pods --namespace=user-service
+
+      - name: Apply Kubernetes Deployment
+        run: |
+          kubectl apply -f your-deployment-manifest.yaml --namespace=user-service
+
       - name: Update Kubernetes Deployment
         if: success()
         run: |
