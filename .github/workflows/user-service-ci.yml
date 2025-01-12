@@ -60,6 +60,11 @@ jobs:
         run: |
           docker push ala264/user-service:${{ github.sha }}
           docker push ala264/user-service:latest
+
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin
+          gcloud components update
           
       - name: Authenticate to Google Cloud
         if: success()
