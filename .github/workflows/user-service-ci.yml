@@ -61,15 +61,21 @@ jobs:
           docker push ala264/user-service:${{ github.sha }}
           docker push ala264/user-service:latest
 
-      - name: Install gke-gcloud-auth-plugin
-        run: |
-          sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
-  
-          
+          - name: Set up Google Cloud SDK
+          uses: google-github-actions/setup-gcloud@v1
+          with:
+            version: 'latest'
+            service_account_key: ${{ secrets.GCP_SA_KEY }}
+            export_default_credentials: true
+
       - name: Install gke-gcloud-auth-plugin
         run: |
           sudo apt-get update
           sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+
+  
+          
+
 
 
       - name: Set up kubectl
