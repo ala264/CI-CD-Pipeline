@@ -102,7 +102,7 @@ jobs:
 
       - name: Apply Kubernetes Deployment
         run: |
-          kubectl apply -f your-deployment-manifest.yaml --namespace=user-service
+          kubectl apply -f ecommerce-app/user-service/deployment.yaml --namespace=user-service
 
       - name: Update Kubernetes Deployment
         if: success()
