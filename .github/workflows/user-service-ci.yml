@@ -92,11 +92,11 @@ jobs:
         run: |
           kubectl get deployments --namespace=user-service
 
-      - name: Debug: Describe Deployment
+      - name: Debug Describe Deployment
         run: |
           kubectl describe deployment user-service-deployment --namespace=user-service || echo "Deployment not found"
 
-      - name: Debug: List Pods
+      - name: Debug List Pods
         run: |
           kubectl get pods --namespace=user-service
 
