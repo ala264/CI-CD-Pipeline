@@ -72,20 +72,19 @@ jobs:
           version: 'latest'
 
 
-      - name: Add Google Cloud SDK repository and GPG key
-        run: |
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       
-      - name: Debug GPG key installation
-        run: |
-          sudo apt-key list  # You can also check the key manually after adding it
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
       
-      - name: Install gke-gcloud-auth-plugin
+      - name: Configure kubectl with gcloud
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-cli
-          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+          gcloud container clusters get-credentials ecommerce-cluster --region us-central1 --project cicd-pipeline-442500
 
   
     
