@@ -78,6 +78,11 @@ jobs:
           curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
 
 
+      - name: Debug GPG key installation
+        run: |
+          sudo apt-key list
+
+
       - name: Install gke-gcloud-auth-plugin
         run: |
           sudo apt-get update
