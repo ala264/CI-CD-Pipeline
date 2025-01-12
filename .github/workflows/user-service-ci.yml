@@ -86,9 +86,13 @@ jobs:
       - name: Install gke-gcloud-auth-plugin
         run: |
           sudo apt-get update
-          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
-
+          sudo apt-get install -y google-cloud-cli
+          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin || true # Allow failure for debugging
+          echo "Installation completed"
+          dpkg -l | grep google-cloud-cli # List installed packages for verification
   
+  
+    
           
 
 
