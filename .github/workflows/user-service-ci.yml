@@ -76,21 +76,17 @@ jobs:
         run: |
           echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
           curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
-  
-
+      
       - name: Debug GPG key installation
         run: |
-          sudo apt-key list
-
-
+          sudo apt-key list  # You can also check the key manually after adding it
+      
       - name: Install gke-gcloud-auth-plugin
         run: |
           sudo apt-get update
           sudo apt-get install -y google-cloud-cli
-          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin || true # Allow failure for debugging
-          echo "Installation completed"
-          dpkg -l | grep google-cloud-cli # List installed packages for verification
-  
+          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+
   
     
           
