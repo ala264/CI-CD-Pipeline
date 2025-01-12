@@ -106,6 +106,8 @@ jobs:
 
       - name: Update Kubernetes Deployment
         if: success()
+        run: |
+          kubectl set image deployment/user-service-deployment user-service=ala264/user-service:${{ github.sha }} --namespace=user-service
 
 
 
