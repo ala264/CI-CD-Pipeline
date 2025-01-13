@@ -60,7 +60,7 @@ app.get('/getUsers', (req, res) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(3001, () => {
+  app.listen(80, () => {
     console.log('User Service listening on http://localhost:3001');
   });
 }
