@@ -16,7 +16,7 @@ db.run(`
 `);
 
 // API Endpoint: Add Product
-app.post('/products', (req, res) => {
+app.post('/addProduct', (req, res) => {
   const { name, price } = req.body;
   db.run('INSERT INTO products (name, price) VALUES (?, ?)', [name, price], function (err) {
     if (err) return res.status(500).json({ error: err.message });
@@ -25,14 +25,14 @@ app.post('/products', (req, res) => {
 });
 
 // API Endpoint: List Products
-app.get('/products', (req, res) => {
+app.get('/getProducts', (req, res) => {
   db.all('SELECT * FROM products', [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
 });
 
-app.delete('/products', (req, res) => {
+app.delete('/deleteProduct', (req, res) => {
   const { id } = req.body;
 
   db.run('DELETE FROM products WHERE id = ?', [id], function (err) {
