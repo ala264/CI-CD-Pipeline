@@ -75,39 +75,46 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # Step 10: Set up gcloud with GKE plugin
-      - name: Set up Google Cloud SDK with GKE plugin
+      - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: cicd-pipeline-442500
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-          install_components: gke-gcloud-auth-plugin
+          version: 'latest'
 
-      # Step 11: Connect to GKE Cluster
-      - name: Connect to GKE Cluster
-        if: success()
+      - name: Install GKE Auth Plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Configure kubectl with gcloud
         run: |
-          gcloud container clusters get-credentials ecommerce-cluster \
-            --region us-central1 \
-            --project cicd-pipeline-442500
-        env:
-          USE_GKE_GCLOUD_AUTH_PLUGIN: "True"
+          export CLOUDSDK_CORE_PROJECT=cicd-pipeline-442500
+          export CLOUDSDK_COMPUTE_REGION=us-central1
+          export CLOUDSDK_CONTAINER_CLUSTER=ecommerce-cluster
+          gcloud container clusters get-credentials $CLOUDSDK_CONTAINER_CLUSTER \
+            --region $CLOUDSDK_COMPUTE_REGION --project $CLOUDSDK_CORE_PROJECT
 
+      - name: Verify kubectl version
+        run: kubectl version --client
 
-      # Step 12: Connect to GKE Cluster
-      - name: Connect to GKE Cluster
-        if: success()
+      - name: Ensure Namespace Exists
         run: |
-          gcloud container clusters get-credentials ecommerce-cluster \
-            --region us-central1 \
-            --project cicd-pipeline-442500
-        env:
-          USE_GKE_GCLOUD_AUTH_PLUGIN: "True"
+          kubectl create namespace product-service || echo "Namespace already exists"
 
-      # Step 12: Update Kubernetes Deployment
+      - name: Debug List Deployments
+        run: |
+          kubectl get deployments --namespace=product-service
+
+      - name: Debug Describe Deployment
+        run: |
+          kubectl describe deployment product-service-deployment --namespace=product-service || echo "Deployment not found"
+
+      - name: Debug List Pods
+        run: |
+          kubectl get pods --namespace=product-service
+
+      - name: Apply Kubernetes Deployment
+        run: |
+          kubectl apply -f ecommerce-app/k8s/product-service/deployment.yaml --namespace=product-service
+
       - name: Update Kubernetes Deployment
         if: success()
         run: |
           kubectl set image deployment/product-service-deployment product-service=ala264/product-service:${{ github.sha }} --namespace=product-service
-          kubectl rollout status deployment/product-service-deployment --namespace=product-service
