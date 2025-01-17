@@ -114,17 +114,6 @@ jobs:
         run: |
           kubectl create namespace product-service || echo "Namespace already exists"
 
-      - name: Debug List Deployments
-        run: |
-          kubectl get deployments --namespace=product-service
-
-      - name: Debug Describe Deployment
-        run: |
-          kubectl describe deployment product-service-deployment --namespace=product-service || echo "Deployment not found"
-
-      - name: Debug List Pods
-        run: |
-          kubectl get pods --namespace=product-service
 
         # Step 15: Applies the kubernetes deployment configuration from deployment.yaml 
       - name: Apply Kubernetes Deployment
