@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: '18'
 
-        # Step 3: Navigates to the product service directory and installs the necessary dependencies
+        # Step 3: Navigates to the user service directory and installs the necessary dependencies
       - name: Install dependencies
         run: |
           cd ecommerce-app/user-service
@@ -113,7 +113,7 @@ jobs:
       - name: Verify kubectl version
         run: kubectl version --client
 
-        # Step 14: Ensures the product service namespace exists in kubernetes 
+        # Step 14: Ensures the user service namespace exists in kubernetes 
       - name: Ensure Namespace Exists
         run: |
           kubectl create namespace user-service || echo "Namespace already exists"
@@ -124,7 +124,7 @@ jobs:
         run: |
           kubectl apply -f ecommerce-app/k8s/user-service/deployment.yaml --namespace=user-service
 
-        # Step 16: Updates the image of the running kubernetes deployment named product-service-deployment to use new docker image created from the current commit 
+        # Step 16: Updates the image of the running kubernetes deployment named user-service-deployment to use new docker image created from the current commit 
       - name: Update Kubernetes Deployment
         if: success()
         run: |
