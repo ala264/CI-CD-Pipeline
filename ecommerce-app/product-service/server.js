@@ -1,5 +1,7 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
+
 
 const app = express();
 const db = new sqlite3.Database('./product-database.sqlite');
