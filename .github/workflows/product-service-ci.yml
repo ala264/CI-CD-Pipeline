@@ -1,41 +1,45 @@
 name: Product Service CI
 
+# .github/workflows is automatically recognized by GitHub actions
+#  Github action workflows run on a different environment from your local machine or repository
+# The workflow runs automatically on a push to the main branch
 on:
   push:
     branches:
       - main
 
+# The job runs on the latest version of ubuntu OS
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout Code
+      # Step 1: Checks out code (downloads) from Github repo into the workflows environment
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
+      # Step 2: Set up Node.js version 18 in the environment for running JS code
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
-      # Step 3: Install Dependencies
+      # Step 3: Navigates to the product service directory and installs the necessary dependencies
       - name: Install dependencies
         run: |
           cd ecommerce-app/product-service
           npm install
 
-      # Step 4: Run Tests
+      # Step 4: Run Tests using Jest to ensure code works as expected
       - name: Run tests
         id: npm-test
         run: |
           cd ecommerce-app/product-service
           npm test
 
-      # Step 5: Rollback (if tests fail)
+      # Step 5: Rollback (if tests fail) to the previous commit and push to main branch
       - name: Rollback (if tests fail)
-        if: failure() && steps.npm-test.outcome == 'failure' 
+        if: failure() && steps.npm-test.outcome == 'failure'
         run: |
           echo "Tests failed. Reverting to the previous commit..."
           git config --global user.email "hathaull@sfu.ca"
@@ -43,9 +47,11 @@ jobs:
           git stash save "Stashing changes before reset"
           git fetch --unshallow
           git reset --hard HEAD~1
-          git push origin main --force 
+          git push origin main --force
 
-      # Step 6: Build Docker Image
+      # Step 6: If the tests pass build a docker image using the dockerfile and use the commit hash in the image name
+      # github.sha is a Github actions environment variable that automatically stores the commit hash of a specific commit
+      # This value is unique for each commit so it can be used as a tag to uniquely identify a version of the application
       - name: Build Docker image
         if: success()
         run: |
@@ -53,7 +59,8 @@ jobs:
           docker build -t ala264/product-service:${{ github.sha }} .
           docker tag ala264/product-service:${{ github.sha }} ala264/product-service:latest
 
-      # Step 7: Log in to Docker Hub
+      # Step 7: Log in to Docker Hub using stored credentials to enable image pushing
+      # Username and password are stored in Github secrets that Github injects during the execution of the workflow
       - name: Log in to Docker Hub
         if: success()
         uses: docker/login-action@v2
@@ -61,28 +68,35 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 8: Push Docker Image
+      # Step 8: Push Docker Image (both tagged with commit hash and latest) to Docker Hub
+      # By pushing both we can refer to the latest version (commit) and also any previous version (commit)
       - name: Push Docker image
         if: success()
         run: |
           docker push ala264/product-service:${{ github.sha }}
           docker push ala264/product-service:latest
 
-      # Step 9: Authenticate to Google Cloud
+      # Step 9: Authenticate to Google Cloud using the provided service account key (JSon file) stored in Github secrets
       - name: Authenticate to Google Cloud
         if: success()
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      # Step 10: Install and configures Google Cloud SDK (which includes kubectl) for interacting with GCP
+      # kubectl is a command line tool used to communicate with Kubernetes clusters 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          version: 'latest'
+          version: "latest"
 
+      # Step 11: Install the GKE authentication plugin to interact with Kubernetes clusters 
       - name: Install GKE Auth Plugin
         run: gcloud components install gke-gcloud-auth-plugin
 
+      # Step 12: Configures kubectl by fetching credentials for the specified GKE cluster 
+      # The kubeconfig file on Github actions runner is populated with credentials and cluster details 
+      # After this step kubectl can be used to interact with Kubernetes cluster by using the updated kubeconfig file 
       - name: Configure kubectl with gcloud
         run: |
           export CLOUDSDK_CORE_PROJECT=cicd-pipeline-442500
@@ -91,9 +105,11 @@ jobs:
           gcloud container clusters get-credentials $CLOUDSDK_CONTAINER_CLUSTER \
             --region $CLOUDSDK_COMPUTE_REGION --project $CLOUDSDK_CORE_PROJECT
 
+        # Step 13: Check the version of kubectl to ensure it insttalled properly 
       - name: Verify kubectl version
         run: kubectl version --client
 
+        # Step 14: Ensures the product service namespace exists in kubernetes 
       - name: Ensure Namespace Exists
         run: |
           kubectl create namespace product-service || echo "Namespace already exists"
@@ -110,10 +126,12 @@ jobs:
         run: |
           kubectl get pods --namespace=product-service
 
+        # Step 15: Applies the kubernetes deployment configuration from deployment.yaml 
       - name: Apply Kubernetes Deployment
         run: |
           kubectl apply -f ecommerce-app/k8s/product-service/deployment.yaml --namespace=product-service
 
+        # Step 16: Updates the image of the running kubernetes deployment named product-service-deployment to use new docker image created from the current commit 
       - name: Update Kubernetes Deployment
         if: success()
         run: |

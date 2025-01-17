@@ -18,4 +18,4 @@ spec:
       - name: product-service
         image: ala264/product-service:${{ github.sha }}
         ports:
-        - containerPort: 8080
+        - containerPort: 8080 #Defines the port on whiich the container is exposed inside the Pod 
