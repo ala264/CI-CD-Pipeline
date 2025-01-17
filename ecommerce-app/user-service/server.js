@@ -5,6 +5,14 @@ const { Pool } = require('pg');
 const app = express();
 const db = new sqlite3.Database('./user-database.sqlite');
 
+const connectionString = 'postgresql://postgres:HussainArman1234.@db.biftoxylzjzouzgfabhc.supabase.co:5432/postgres';
+
+// Setup PostgreSQL connection pool with hardcoded credentials
+const pool = new Pool({
+  connectionString: connectionString,
+});
+
+
 app.use(express.json());
 
 // Create Users Table
