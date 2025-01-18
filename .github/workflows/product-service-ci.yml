@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  DATABASE_URL: "postgresql://postgres:HussainArman1234.@db.biftoxylzjzouzgfabhc.supabase.co:5432/postgres"
+  DATABASE_URL: "postgresql://postgres.biftoxylzjzouzgfabhc:HussainArman1234.@aws-0-ca-central-1.pooler.supabase.com:5432/postgres"
   #DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 # The job runs on the latest version of ubuntu OS
@@ -38,8 +38,7 @@ jobs:
       - name: Run tests
         id: npm-test
         env:
-          PGHOST: "db.biftoxylzjzouzgfabhc.supabase.co"  # Explicitly set the hostname to avoid IPv6 resolution
-          DATABASE_URL: "postgresql://postgres:HussainArman1234.@db.biftoxylzjzouzgfabhc.supabase.co:5432/postgres"
+          DATABASE_URL: "postgresql://postgres.biftoxylzjzouzgfabhc:HussainArman1234.@aws-0-ca-central-1.pooler.supabase.com:5432/postgres"
         run: |
           cd ecommerce-app/product-service
           npm test
