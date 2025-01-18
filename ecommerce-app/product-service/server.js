@@ -6,9 +6,8 @@ require('dotenv').config()
 const app = express();
 //const db = new sqlite3.Database('./product-database.sqlite');
 
-let pool
 // Setup PostgreSQL connection pool with hardcoded credentials
-pool = new Pool({
+const pool = new Pool({
     connectionString:  process.env.DATABASE_URL,
   });
 
