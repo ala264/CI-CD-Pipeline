@@ -1,15 +1,14 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const { Pool } = require('pg');
+require('dotenv').config();
 
 const app = express();
 const db = new sqlite3.Database('./user-database.sqlite');
 
-const connectionString = 'postgresql://postgres:HussainArman1234.@db.biftoxylzjzouzgfabhc.supabase.co:5432/postgres';
-
 // Setup PostgreSQL connection pool with hardcoded credentials
 const pool = new Pool({
-  connectionString: connectionString,
+  connectionString: process.env.DATABASE_URL,
 });
 
 
@@ -70,7 +69,7 @@ app.get('/getUsers', (req, res) => {
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(80, () => {
-    console.log('User Service listening on http://localhost:3001');
+    console.log('User Service listening on http://localhost:80');
   });
 }
 module.exports = app;

@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+env:
+  DATABASE_URL: "postgresql://postgres:HussainArman1234.@db.biftoxylzjzouzgfabhc.supabase.co:5432/postgres"
+  #DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
 # The job runs on the latest version of ubuntu OS
 jobs:
   build:
@@ -33,21 +37,23 @@ jobs:
       # Step 4: Run Tests using Jest to ensure code works as expected
       - name: Run tests
         id: npm-test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }} 
         run: |
           cd ecommerce-app/product-service
           npm test
 
       # Step 5: Rollback (if tests fail) to the previous commit and push to main branch
-      - name: Rollback (if tests fail)
-        if: failure() && steps.npm-test.outcome == 'failure'
-        run: |
-          echo "Tests failed. Reverting to the previous commit..."
-          git config --global user.email "hathaull@sfu.ca"
-          git config --global user.name "hathaull"
-          git stash save "Stashing changes before reset"
-          git fetch --unshallow
-          git reset --hard HEAD~1
-          git push origin main --force
+      #- name: Rollback (if tests fail)
+      #  if: failure() && steps.npm-test.outcome == 'failure'
+      #  run: |
+      #    echo "Tests failed. Reverting to the previous commit..."
+      #    git config --global user.email "hathaull@sfu.ca"
+      #    git config --global user.name "hathaull"
+      #    git stash save "Stashing changes before reset"
+      #    git fetch --unshallow
+      #    git reset --hard HEAD~1
+      #    git push origin main --force
 
       # Step 6: If the tests pass build a docker image using the dockerfile and use the commit hash in the image name
       # github.sha is a Github actions environment variable that automatically stores the commit hash of a specific commit
@@ -113,6 +119,10 @@ jobs:
       - name: Ensure Namespace Exists
         run: |
           kubectl create namespace product-service || echo "Namespace already exists"
+
+      - name : Create Kubernetes Secret 
+        run: | 
+          kubectl create secret generic my-app-secret --from-literal=DATABASE_URL="$DATABASE_URL"
 
 
         # Step 15: Applies the kubernetes deployment configuration from deployment.yaml 

@@ -1,7 +1,13 @@
 const request = require('supertest');
 const app = require('../server'); // Import the Express app
-const sqlite3 = require('sqlite3');
-let db;
+//const sqlite3 = require('sqlite3');
+const { Pool } = require('pg');
+require('dotenv').config();
+
+//let db;
+let pool 
+
+/*
 beforeAll(() => {
   db = new sqlite3.Database('./product-database.sqlite');
 });
@@ -21,6 +27,22 @@ afterAll(async () => {
     });
   });
 });
+*/
+
+beforeAll(() => {
+  pool = new Pool({
+    connectionString:  process.env.DATABASE_URL,
+  });
+});
+
+beforeEach(async () => {
+  await pool.query('DELETE FROM products');
+});
+
+afterAll(async () => {
+  await pool.end();
+});
+
 test('Should add a new product successfully', async () => {
   const response = await request(app)
     .post('/addProduct')

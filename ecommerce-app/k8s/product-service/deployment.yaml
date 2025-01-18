@@ -19,3 +19,9 @@ spec:
         image: ala264/product-service:${{ github.sha }}
         ports:
         - containerPort: 8080 #Defines the port on which the container is exposed inside the Pod 
+        env: 
+        - name: DATABASE_URL
+          valueFrom: 
+            secretKeyRef: 
+              name: product-app-secret
+              key: DATABASE_URL
