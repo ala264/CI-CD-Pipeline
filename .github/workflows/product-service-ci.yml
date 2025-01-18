@@ -38,6 +38,7 @@ jobs:
       - name: Run tests
         id: npm-test
         env:
+          PGHOST: "db.biftoxylzjzouzgfabhc.supabase.co"  # Explicitly set the hostname to avoid IPv6 resolution
           DATABASE_URL: "postgresql://postgres:HussainArman1234.@db.biftoxylzjzouzgfabhc.supabase.co:5432/postgres"
         run: |
           cd ecommerce-app/product-service
