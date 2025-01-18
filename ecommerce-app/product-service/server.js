@@ -61,8 +61,8 @@ app.delete('/deleteProduct', async (req, res) => {
 
 // Start Server
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(80, () => {
-    console.log('Product Service listening on http://localhost:80');
+  app.listen(81, () => {
+    console.log('Product Service listening on http://localhost:81');
   });
 }
 module.exports = app;

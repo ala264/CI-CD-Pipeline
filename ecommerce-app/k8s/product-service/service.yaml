@@ -9,6 +9,6 @@ spec:
     app: product-service
   ports:
     - protocol: TCP
-      port: 80 #port exposed by the service 
+      port: 81 #port exposed by the service 
       targetPort: 8080 #This is the port on the backend Pods to which the Service forwards traffic 
   type: LoadBalancer
