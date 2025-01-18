@@ -38,7 +38,7 @@ jobs:
       - name: Run tests
         id: npm-test
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }} 
+          DATABASE_URL: "postgresql://postgres:HussainArman1234.@db.biftoxylzjzouzgfabhc.supabase.co:5432/postgres"
         run: |
           cd ecommerce-app/product-service
           npm test
