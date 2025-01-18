@@ -1,26 +1,17 @@
 const express = require('express');
-//const sqlite3 = require('sqlite3').verbose();
 const { Pool } = require('pg');
 require('dotenv').config()
 
 const app = express();
-//const db = new sqlite3.Database('./product-database.sqlite');
 
 // Setup PostgreSQL connection pool with hardcoded credentials
 const pool = new Pool({
     connectionString:  process.env.DATABASE_URL,
   });
 
+
 app.use(express.json());
 
-// Create Products Table
-/*db.run(`
-  CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    price REAL
-  )
-`);*/
 
 // API Endpoint: Add Product
 app.post('/addProduct', async (req, res) => {
@@ -67,6 +58,7 @@ app.delete('/deleteProduct', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 // Start Server
 if (process.env.NODE_ENV !== 'test') {
   app.listen(81, () => {

@@ -1,33 +1,9 @@
 const request = require('supertest');
 const app = require('../server'); // Import the Express app
-//const sqlite3 = require('sqlite3');
 const { Pool } = require('pg');
 require('dotenv').config();
 
-//let db;
 let pool 
-
-/*
-beforeAll(() => {
-  db = new sqlite3.Database('./product-database.sqlite');
-});
-beforeEach(async () => {
-  await new Promise((resolve, reject) => {
-    db.run('DELETE FROM products', (err) => {
-      if (err) reject(err);
-      resolve();
-    });
-  });
-});
-afterAll(async () => {
-  await new Promise((resolve, reject) => {
-    db.close((err) => {
-      if (err) return reject(err);
-      resolve();
-    });
-  });
-});
-*/
 
 beforeAll(() => {
   pool = new Pool({
