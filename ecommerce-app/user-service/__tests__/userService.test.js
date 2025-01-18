@@ -1,24 +1,26 @@
 const request = require('supertest');
 const app = require('../server');
 const sqlite3 = require('sqlite3');
+const { Pool } = require('pg');
+require('dotenv').config();
 
-let db;
+
+let pool 
+
 beforeAll(() => {
-  db = new sqlite3.Database('./user-database.sqlite');
+  pool = new Pool({
+    connectionString:  process.env.DATABASE_URL,
+  });
 });
 
 beforeEach(async () => {
-  await new Promise((resolve, reject) => {
-    db.run('DELETE FROM users', (err) => {
-      if (err) reject(err);
-      resolve();
-    });
-  });
+  await pool.query('DELETE FROM users');
 });
-afterAll(() => {
-  const db = new sqlite3.Database('./user-database.sqlite');
-  db.close();
+
+afterAll(async () => {
+  await pool.end();
 });
+
 test('Should register a new user successfully', async () => {
   const response = await request(app)
     .post('/register')
@@ -26,17 +28,20 @@ test('Should register a new user successfully', async () => {
   expect(response.statusCode).toBe(201);
   expect(response.body).toHaveProperty('id');
 });
+
 test('Should login a user successfully', async () => {
   await request(app).post('/register').send({ username: 'testuser', password: 'testpass' });
   const response = await request(app).post('/login').send({ username: 'testuser', password: 'testpass' });
   expect(response.statusCode).toBe(200);
   expect(response.body.message).toBe('Login successful');
 });
+
 test('Should fail login with invalid credentials', async () => {
   const response = await request(app).post('/login').send({ username: 'wronguser', password: 'wrongpass' });
   expect(response.statusCode).toBe(400);
   expect(response.body.error).toBe('Invalid credentials');
 });
+
 test('Should delete a user successfully', async () => {
   // Register a new user first
   const registerResponse = await request(app)
@@ -55,6 +60,7 @@ test('Should delete a user successfully', async () => {
   const userExists = users.some((user) => user.id === userId);
   expect(userExists).toBe(false);
 });
+
 test('Should get all users successfully', async () => {
   // Register two users
   await request(app).post('/register').send({ username: 'user1', password: 'pass1' });
@@ -69,6 +75,7 @@ test('Should get all users successfully', async () => {
   expect(usernames).toContain('user1');
   expect(usernames).toContain('user2');
 });
+
 test('Should return 404 for invalid user deletion', async () => {
   // Attempt to delete a non-existent product
   const response = await request(app)

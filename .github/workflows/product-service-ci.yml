@@ -122,7 +122,8 @@ jobs:
 
       - name : Create Kubernetes Secret 
         run: | 
-          kubectl create secret generic my-app-secret --from-literal=DATABASE_URL="$DATABASE_URL"
+           kubectl delete secret product-app-secret --namespace=product-service --ignore-not-found
+           kubectl create secret generic product-app-secret --from-literal=DATABASE_URL="$DATABASE_URL" --namespace=product-service
 
 
         # Step 15: Applies the kubernetes deployment configuration from deployment.yaml 

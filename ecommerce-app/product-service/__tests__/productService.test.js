@@ -26,6 +26,7 @@ test('Should add a new product successfully', async () => {
   expect(response.statusCode).toBe(201);
   expect(response.body).toHaveProperty('id');
 });
+
 test('Should list all products successfully', async () => {
   // Add two products first
   await request(app).post('/addProduct').send({ name: 'Product A', price: 99.99 });
@@ -40,6 +41,7 @@ test('Should list all products successfully', async () => {
   expect(productNames).toContain('Product A');
   expect(productNames).toContain('Product B');
 });
+
 test('Should delete a product successfully', async () => {
   // Add a product first
   const addResponse = await request(app)
@@ -58,6 +60,7 @@ test('Should delete a product successfully', async () => {
   const productExists = products.some((product) => product.id === productId);
   expect(productExists).toBe(false);
 });
+
 test('Should return 404 for invalid product deletion', async () => {
   // Attempt to delete a non-existent product
   const response = await request(app)
