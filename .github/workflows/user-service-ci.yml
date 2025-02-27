@@ -9,8 +9,7 @@ on:
       - main
 
 env:
-  DATABASE_URL: "postgresql://postgres.biftoxylzjzouzgfabhc:HussainArman1234.@aws-0-ca-central-1.pooler.supabase.com:5432/postgres"
-  #DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 # The job runs on the latest version of ubuntu OS
 jobs:
@@ -38,7 +37,7 @@ jobs:
       - name: Run tests
         id: npm-test
         env:
-          DATABASE_URL: "postgresql://postgres.biftoxylzjzouzgfabhc:HussainArman1234.@aws-0-ca-central-1.pooler.supabase.com:5432/postgres"
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           cd ecommerce-app/user-service
           npm test
