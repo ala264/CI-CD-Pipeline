@@ -24,7 +24,8 @@ Each workflow:
 - connects to the GKE cluster with `kubectl`
 - updates the Kubernetes Deployment to use the new image
 
-If the tests fail, the deployment steps do not run. 
+If the tests fail, the deployment steps do not run.
+
 **Note:** The original cloud and database environment used by the deployment workflow is no longer active, so recent documentation-only commits may show a failed deployment check.
 
 ## Architecture
